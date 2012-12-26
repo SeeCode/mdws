@@ -1,4 +1,4 @@
-﻿#region CopyrightHeader
+#region CopyrightHeader
 //
 //  Copyright by Contributors
 //
@@ -16,9 +16,10 @@
 //
 #endregion
 
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+﻿using System.IO;
+﻿using System.Linq;
 using System.Web;
 using System.Text;
 using gov.va.medora.mdo;
@@ -108,16 +109,16 @@ namespace gov.va.medora.mdws.conf
             // set defaults in case no registry entries exist
             _resourcesPath = utils.ResourceUtils.ResourcesPath;
 #if DEBUG
-            if (System.IO.File.Exists(_resourcesPath + "conf\\secret-mdws.conf"))
+            if (System.IO.File.Exists(Path.Combine(_resourcesPath, "conf","secret-mdws.conf")))
             {
-                ConfigFilePath = _resourcesPath + "conf\\secret-mdws.conf";
+                ConfigFilePath = Path.Combine(_resourcesPath, "conf", "secret-mdws.conf");
             }
             else
             {
-                ConfigFilePath = _resourcesPath + "conf\\app.conf";
+                ConfigFilePath = Path.Combine(_resourcesPath, "conf", "app.conf");
             }
 #else
-            ConfigFilePath = _resourcesPath + "conf\\app.conf";
+            ConfigFilePath = Path.Combine(_resourcesPath, "conf", "app.conf");
 #endif
         }
 

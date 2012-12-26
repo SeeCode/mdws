@@ -17,15 +17,7 @@
 #endregion
 
 using System;
-using System.Data;
-using System.Configuration;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
-using gov.va.medora.mdo;
+using System.IO;
 using gov.va.medora.mdo.dao.vista;
 
 /// <summary>
@@ -35,10 +27,17 @@ namespace gov.va.medora.mdws
 {
     public class MdwsConstants
     {
+        static MdwsConstants()
+        {
+            STATES_FILE_NAME = Path.Combine("xml", "VhaSitesByState.xml");
+            VISNS_BY_STATE_FILE_NAME = Path.Combine("xml", "VisnsByState.xml");
+        }
+
         // Paths
-        public const string STATES_FILE_NAME = "xml\\VhaSitesByState.xml";
-        public const string VISNS_BY_STATE_FILE_NAME = "xml\\VisnsByState.xml";
+        public static readonly string STATES_FILE_NAME;
+        public static readonly string VISNS_BY_STATE_FILE_NAME;
         public const string DEFAULT_SITES_FILE_NAME = "VhaSites.xml";
+
         // Session vars
         // NOTE: If you change SITE_TABLE, make sure you change web.config as well
         public const String SITE_TABLE = "VhaSiteTable";
