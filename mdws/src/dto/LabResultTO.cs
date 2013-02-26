@@ -1,21 +1,3 @@
-#region CopyrightHeader
-//
-//  Copyright by Contributors
-//
-//  Licensed under the Apache License, Version 2.0 (the "License");
-//  you may not use this file except in compliance with the License.
-//  You may obtain a copy of the License at
-//
-//         http://www.apache.org/licenses/LICENSE-2.0.txt
-//
-//  Unless required by applicable law or agreed to in writing, software
-//  distributed under the License is distributed on an "AS IS" BASIS,
-//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//  See the License for the specific language governing permissions and
-//  limitations under the License.
-//
-#endregion
-
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -25,6 +7,7 @@ namespace gov.va.medora.mdws.dto
 {
     public class LabResultTO : AbstractTO
     {
+        public string timestamp;
         public LabTestTO test;
         public string specimenType;
         public string comment;
@@ -42,9 +25,22 @@ namespace gov.va.medora.mdws.dto
             }
             this.specimenType = mdo.SpecimenType;
             this.comment = mdo.Comment;
-            this.value = StringUtils.stripInvalidXmlCharacters(mdo.Value); // http://trac.medora.va.gov/web/ticket/1447
+            //this.value = mdo.Value;
+            this.value = StringUtils.stripInvalidXmlCharacters(mdo.Value); // http://trac.medora.va.gov/web/ticket/1447 - stripping at VistaConnection.query
             this.boundaryStatus = mdo.BoundaryStatus;
             this.labSiteId = mdo.LabSiteId;
+            this.timestamp = mdo.Timestamp;
+        }
+
+        public LabResultTO(string specimenType, string comment, string value, string boundaryStatus, string labSiteId, string timestamp)
+        {
+            this.specimenType = specimenType;
+            this.comment = comment;
+            //this.value = value; 
+            this.value = StringUtils.stripInvalidXmlCharacters(value); // http://trac.medora.va.gov/web/ticket/1447  // - stripping at VistaConnection.query
+            this.boundaryStatus = boundaryStatus;
+            this.labSiteId = labSiteId;
+            this.timestamp = timestamp;
         }
     }
 }

@@ -1,21 +1,3 @@
-#region CopyrightHeader
-//
-//  Copyright by Contributors
-//
-//  Licensed under the Apache License, Version 2.0 (the "License");
-//  you may not use this file except in compliance with the License.
-//  You may obtain a copy of the License at
-//
-//         http://www.apache.org/licenses/LICENSE-2.0.txt
-//
-//  Unless required by applicable law or agreed to in writing, software
-//  distributed under the License is distributed on an "AS IS" BASIS,
-//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//  See the License for the specific language governing permissions and
-//  limitations under the License.
-//
-#endregion
-
 using System;
 using gov.va.medora.mdo;
 
@@ -27,6 +9,7 @@ namespace gov.va.medora.mdws.dto
 {
     public class UserTO : AbstractTO
     {
+        public string domain;
         public string name;
         public string SSN;
         public string DUZ;
@@ -40,6 +23,10 @@ namespace gov.va.medora.mdws.dto
         public string userClass;
         public string greeting;
         public string siteMessage;
+        public TaggedTextArray ids;
+        public string emailAddress;
+        public string username;
+        public DemographicSetTO demographics;
         //public UserSecurityKeyArray securityKeys;
         //public UserOptionArray menuOptions;
         //public UserOptionArray delegatedOptions;
@@ -68,6 +55,10 @@ namespace gov.va.medora.mdws.dto
             this.orderRole = mdoUser.OrderRole;
             this.userClass = mdoUser.UserClass;
             this.greeting = mdoUser.Greeting;
+            this.emailAddress = mdoUser.EmailAddress;
+            this.username = mdoUser.UserName;
+            this.demographics = new DemographicSetTO(mdoUser.Demographics);
+            this.domain = mdoUser.Domain;
             //if (mdoUser.SecurityKeys != null)
             //{
             //    this.securityKeys = new UserSecurityKeyArray(mdoUser.SecurityKeys);

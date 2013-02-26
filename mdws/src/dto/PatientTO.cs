@@ -1,21 +1,3 @@
-#region CopyrightHeader
-//
-//  Copyright by Contributors
-//
-//  Licensed under the Apache License, Version 2.0 (the "License");
-//  you may not use this file except in compliance with the License.
-//  You may obtain a copy of the License at
-//
-//         http://www.apache.org/licenses/LICENSE-2.0.txt
-//
-//  Unless required by applicable law or agreed to in writing, software
-//  distributed under the License is distributed on an "AS IS" BASIS,
-//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//  See the License for the specific language governing permissions and
-//  limitations under the License.
-//
-#endregion
-
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -26,6 +8,7 @@ namespace gov.va.medora.mdws.dto
     public class PatientTO : PersonTO
     {
         // Delphi has issues with using just Name as an accessor - patientName is a workaround
+        public string eligibilityCode;
         public string patientName = "";
         public string mpiPid = "";
         public string mpiChecksum = "";
@@ -63,6 +46,14 @@ namespace gov.va.medora.mdws.dto
             {
                 return;
             }
+            if (mdo.Relationships != null && mdo.Relationships.Count > 0)
+            {
+                this.relationships = new PersonArray(mdo.Relationships);
+            }
+            this.religion = mdo.Religion;
+            this.employmentStatus = mdo.EmploymentStatus;
+            this.occupation = mdo.Occupation;
+            this.eligibilityCode = mdo.EligibilityCode;
             this.name = this.patientName = mdo.Name == null ? "" : mdo.Name.getLastNameFirst();
             this.ssn = mdo.SSN == null ? "" : mdo.SSN.toString();
             this.dob = mdo.DOB;

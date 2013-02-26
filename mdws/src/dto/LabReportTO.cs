@@ -1,22 +1,4 @@
-﻿#region CopyrightHeader
-//
-//  Copyright by Contributors
-//
-//  Licensed under the Apache License, Version 2.0 (the "License");
-//  you may not use this file except in compliance with the License.
-//  You may obtain a copy of the License at
-//
-//         http://www.apache.org/licenses/LICENSE-2.0.txt
-//
-//  Unless required by applicable law or agreed to in writing, software
-//  distributed under the License is distributed on an "AS IS" BASIS,
-//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//  See the License for the specific language governing permissions and
-//  limitations under the License.
-//
-#endregion
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -27,28 +9,56 @@ namespace gov.va.medora.mdws.dto
     [Serializable]
     public class LabReportTO : AbstractTO
     {
-        public AuthorTO Author { get; set; }
-        public string CaseNumber { get; set; }
-        public string Comment { get; set; }
-        public SiteTO Facility { get; set; }
-        public string Id { get; set; }
-        public LabSpecimenTO Specimen { get; set; }
-        public string Timestamp { get; set; }
-        public string Title { get; set; }
+        public LabPanelTO panel;
+        public LabResultTO result;
+        //public LabTestArray tests;
+        //public LabResultTO Result { get; set; }
+        public AuthorTO author { get; set; }
+        public string caseNumber { get; set; }
+        public string comment { get; set; }
+        public SiteTO facility { get; set; }
+        public string id { get; set; }
+        public LabSpecimenTO specimen { get; set; }
+        public string timestamp { get; set; }
+        public string title { get; set; }
+        public string text { get; set; }
+        public string type { get; set; }
+
+        public LabReportTO() { }
 
         public LabReportTO(LabReport report)
         {
-            Author = new AuthorTO(report.Author);
-            CaseNumber = report.CaseNumber;
-            Comment = report.Comment;
+            if (report == null)
+            {
+                return;
+            }
+            this.panel = new LabPanelTO(report.Panel);
+            //if (report.Tests != null && report.Tests.Count > 0)
+            //{
+            //    tests = new LabTestArray(report.Tests);
+            //}
+            if (report.Result != null)
+            {
+                result = new LabResultTO(report.Result);
+            }
+            author = new AuthorTO(report.Author);
+            caseNumber = report.CaseNumber;
+            comment = report.Comment;
             if (report.Facility != null)
             {
-                Facility = new SiteTO(new mdo.Site(report.Facility.Id, report.Facility.Name));
+                facility = new SiteTO(new mdo.Site(report.Facility.Id, report.Facility.Name));
             }
-            Id = report.Id;
-            Specimen = new LabSpecimenTO(report.Specimen);
-            Timestamp = report.Timestamp;
-            Title = report.Title;
+            id = report.Id;
+            //Specimen = new LabSpecimenTO(report.Specimen);
+            timestamp = report.Timestamp;
+            title = report.Title;
+            type = report.Type;
+            text = report.Text;
+
+            if (report.Specimen != null)
+            {
+                specimen = new LabSpecimenTO(report.Specimen);
+            }
         }
     }
 }
