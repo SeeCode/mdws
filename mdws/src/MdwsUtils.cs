@@ -375,5 +375,35 @@ namespace gov.va.medora.mdws
                 return false;
             }
         }
+
+        public static Dictionary<string, object> getArgsDictionary(ParameterInfo[] paramInfo, IList<object> passedArgs)
+        {
+            Dictionary<string, object> result = new Dictionary<string, object>();
+            foreach (ParameterInfo pi in paramInfo)
+            {
+                if (pi.DefaultValue == null) // if parameter defaults to null - don't include
+                {
+                    continue;
+                }
+                result.Add(pi.Name, passedArgs[pi.Position]);
+            }
+            return result;
+        }
+
+        public static void checkNullArgs(Dictionary<string, object> args)
+        {
+            foreach (string key in args.Keys)
+            {
+                if (args[key] is String)
+                {
+                    if (String.IsNullOrEmpty((String)args[key]))
+                    {
+                        throw new ArgumentNullException("Must supply {0}", key);
+                    }
+                }
+                // TODO - implement other types?
+            }
+        }
+
     }
 }

@@ -1,21 +1,3 @@
-#region CopyrightHeader
-//
-//  Copyright by Contributors
-//
-//  Licensed under the Apache License, Version 2.0 (the "License");
-//  you may not use this file except in compliance with the License.
-//  You may obtain a copy of the License at
-//
-//         http://www.apache.org/licenses/LICENSE-2.0.txt
-//
-//  Unless required by applicable law or agreed to in writing, software
-//  distributed under the License is distributed on an "AS IS" BASIS,
-//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//  See the License for the specific language governing permissions and
-//  limitations under the License.
-//
-#endregion
-
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -30,6 +12,7 @@ namespace gov.va.medora.mdws.dto
         public TaggedText department;
         public TaggedText service;
         public TaggedText specialty;
+        public TaggedText stopCode;
         public SiteTO facility;
         public string building = "";
         public string floor = "";
@@ -40,6 +23,11 @@ namespace gov.va.medora.mdws.dto
         public string appointmentTimestamp = "";
         public string type = "";
         public string physicalLocation = ""; // free text description string - parsability is undefined. see #2917
+        public bool askForCheckIn; // file 44 field 24
+        public string appointmentLength; // file 44 field 1912
+        public string clinicDisplayStartTime; // file 44, field 1914
+        public string displayIncrements; // file 44, field 1917
+        public TimeSlotArray availability;
 
         public HospitalLocationTO() { }
 
@@ -54,6 +42,7 @@ namespace gov.va.medora.mdws.dto
             this.department = new TaggedText(mdo.Department);
             this.service = new TaggedText(mdo.Service);
             this.specialty = new TaggedText(mdo.Specialty);
+            this.stopCode = new TaggedText(mdo.StopCode);
             if (mdo.Facility != null)
             {
                 this.facility = new SiteTO(mdo.Facility);
@@ -67,6 +56,11 @@ namespace gov.va.medora.mdws.dto
             this.appointmentTimestamp = mdo.AppointmentTimestamp;
             this.type = mdo.Type;
             this.physicalLocation = mdo.PhysicalLocation;
+            this.askForCheckIn = mdo.AskForCheckIn;
+            this.appointmentLength = mdo.AppointmentLength;
+            this.clinicDisplayStartTime = mdo.ClinicDisplayStartTime;
+            this.displayIncrements = mdo.DisplayIncrements;
+            this.availability = new TimeSlotArray(mdo.Availability);
         }
     }
 }

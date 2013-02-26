@@ -66,6 +66,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml" />
@@ -86,6 +87,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <Content Include="SchedulingSvc.asmx" />
     <Content Include="Web\VistaSitesMap.html" />
   </ItemGroup>
   <ItemGroup>
@@ -104,8 +106,13 @@
     <Compile Include="src\dao\sql\ConnectionTester.cs" />
     <Compile Include="src\dao\sql\MdwsToolsDao.cs" />
     <Compile Include="src\dao\sql\UserValidationDao.cs" />
+    <Compile Include="src\dto\AppointmentTypeArray.cs" />
+    <Compile Include="src\dto\AppointmentTypeTO.cs" />
     <Compile Include="src\dto\BoolTO.cs" />
     <Compile Include="src\dto\ClaimTO.cs" />
+    <Compile Include="src\dto\LabPanelTO.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="src\dto\TaggedHealthSummaryArrays.cs" />
     <Compile Include="src\dto\TaggedHealthSummaryArray.cs" />
     <Compile Include="src\dto\HealthSummaryTO.cs" />
@@ -155,15 +162,20 @@
     <Compile Include="src\dto\TaggedProstheticClaimArray.cs" />
     <Compile Include="src\dto\TaggedProstheticClaimArrays.cs" />
     <Compile Include="src\dto\TaggedRatedDisabilityArray.cs" />
+    <Compile Include="src\dto\TimeSlotArray.cs" />
+    <Compile Include="src\dto\TimeSlotTO.cs" />
     <Compile Include="src\lib\AccountLib.cs" />
     <Compile Include="src\lib\ClaimsLib.cs" />
     <Compile Include="src\lib\ClinicalRemindersLib.cs" />
     <Compile Include="src\lib\LocationLib.cs" />
+    <Compile Include="src\lib\SchedulingLib.cs" />
     <Compile Include="src\lib\SecureMessageLib.cs" />
     <Compile Include="src\lib\UserLib.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\conf\MdwsConfiguration.cs" />
+    <Compile Include="src\QueryTemplate.cs" />
+    <Compile Include="src\SoapQuery.cs" />
     <Compile Include="src\svc\BhieService.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -174,6 +186,9 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="src\svc\PhrSvc.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="src\svc\SchedulingSvc.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Web\auth\Administration.aspx.cs">
