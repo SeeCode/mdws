@@ -710,7 +710,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <None Include="resources\conf\app.conf" />
+    <None Include="resources\conf\mdws.conf" />
     <Content Include="BaseService.asmx" />
     <Content Include="CallService.asmx" />
     <Content Include="Web\auth\Administration.aspx" />
