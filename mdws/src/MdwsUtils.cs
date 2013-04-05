@@ -29,6 +29,7 @@ using gov.va.medora.mdo.dao;
 using gov.va.medora.mdo.dao.vista;
 using gov.va.medora.mdo;
 using gov.va.medora.utils;
+using gov.va.medora.mdws.conf;
 
 /// <summary>
 /// Summary description for MplUtils
@@ -114,6 +115,19 @@ namespace gov.va.medora.mdws
             string result = stringWriter.ToString();
             result = result.Replace("\"", "&quot;");
             result = result.Replace("'", "&apos;");
+            return result;
+        }
+
+
+        public static User getApplicationProxyUser()
+        {
+            MySession mySession = new MySession();
+            User result = new User();
+            result.setSSN(mySession.MdwsConfiguration.AllConfigs[MdwsConfigConstants.APP_PROXY_CONFIG_SECTION][MdwsConfigConstants.APP_PROXY_FEDUID]);
+            result.setName(mySession.MdwsConfiguration.AllConfigs[MdwsConfigConstants.APP_PROXY_CONFIG_SECTION][MdwsConfigConstants.APP_PROXY_NAME]);
+            result.Uid = mySession.MdwsConfiguration.AllConfigs[MdwsConfigConstants.APP_PROXY_CONFIG_SECTION][MdwsConfigConstants.APP_PROXY_UID];
+            result.LogonSiteId = new SiteId(mySession.MdwsConfiguration.AllConfigs[MdwsConfigConstants.APP_PROXY_CONFIG_SECTION][MdwsConfigConstants.APP_PROXY_SITE_ID], "DoD");
+            result.PermissionString = mySession.MdwsConfiguration.AllConfigs[MdwsConfigConstants.APP_PROXY_CONFIG_SECTION][MdwsConfigConstants.APP_PROXY_PERMISSION];
             return result;
         }
 

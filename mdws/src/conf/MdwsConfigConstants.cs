@@ -1,22 +1,4 @@
-﻿#region CopyrightHeader
-//
-//  Copyright by Contributors
-//
-//  Licensed under the Apache License, Version 2.0 (the "License");
-//  you may not use this file except in compliance with the License.
-//  You may obtain a copy of the License at
-//
-//         http://www.apache.org/licenses/LICENSE-2.0.txt
-//
-//  Unless required by applicable law or agreed to in writing, software
-//  distributed under the License is distributed on an "AS IS" BASIS,
-//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//  See the License for the specific language governing permissions and
-//  limitations under the License.
-//
-#endregion
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -26,7 +8,7 @@ namespace gov.va.medora.mdws.conf
 {
     public class MdwsConfigConstants : ConfigFileConstants
     {
-        public static string MDWS_CONFIG_SECTION = "MDWS";
+        public static string MDWS_CONFIG_SECTION = "MAIN";
         /// <summary>
         /// MDWS sessions log level
         /// </summary>
@@ -55,32 +37,30 @@ namespace gov.va.medora.mdws.conf
         public static string DEFAULT_VISIT_METHOD = "VisitMethod";
 
         public static string DEFAULT_CONTEXT = "DefaultContext";
-        
+
         public static string EXCLUDE_SITE_200 = "ExcludeSite200";
 
         public static string WATCH_SITES_FILE = "WatchSitesFile";
 
-        public static string BHIE_PASSWORD = "BhiePassword";
+        public static string TIMEOUT = "TimeOut";
 
-        /// <summary>
-        /// The BSE data encryption key
-        /// </summary>
-        public static string BSE_SQL_ENCRYPTION_KEY = "EncryptionKey";
-        /// <summary>
-        /// Valid NHIN data types
-        /// </summary>
-        public static string NHIN_TYPES = "NhinTypes";
-        /// <summary>
-        /// MDWS service account federated ID
-        /// </summary>
-        public static string SERVICE_ACCOUNT_FED_UID = "ServiceAccountFederatedUid";
-        /// <summary>
-        /// MDWS service account name
-        /// </summary>
-        public static string SERVICE_ACCOUNT_NAME = "ServiceAccountSubjectName";
-        /// <summary>
-        /// MDWS service account BSE password
-        /// </summary>
-        public static string SERVICE_ACCOUNT_PASSWORD = "ServiceAccountPassword";
+        public static string APP_PROXY_NAME = "Name";
+        public static string APP_PROXY_USERNAME = "Username";
+        public static string APP_PROXY_PASSWORD = "Password";
+        public static string APP_PROXY_UID = "UserId";
+        public static string APP_PROXY_FEDUID = "FedUserId";
+        public static string APP_PROXY_PHONE = "UserPhone";
+        public static string APP_PROXY_SITE_ID = "UserSiteId";
+        public static string APP_PROXY_PERMISSION = "Permission";
+        public static string APP_PROXY_CRED_TYPE = "CredentialsType";
+
+        public static string CONNECTION_POOL_CONFIG_SECTION = "Connection Pool";
+        public static string CONNECTION_POOLING = "UseConnectionPool";
+        public static string CONNECTION_POOL_MAX_CXNS = "MaxCxns";
+        public static string CONNECTION_POOL_MIN_CXNS = "MinCxns";
+        public static string CONNECTION_POOL_EXPAND_SIZE = "ExpansionSize";
+        public static string CONNECTION_POOL_WAIT_TIME = "WaitTime";
+        public static string CONNECTION_POOL_CXN_TIMEOUT = "TimeOut";
+        public static string CONNECTION_POOL_LOAD_STRATEGY = "LoadStrategy";
     }
 }

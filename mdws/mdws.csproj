@@ -87,6 +87,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <Content Include="QuerySvc.asmx" />
     <Content Include="SchedulingSvc.asmx" />
     <Content Include="Web\VistaSitesMap.html" />
   </ItemGroup>
@@ -113,6 +114,7 @@
     <Compile Include="src\dto\LabPanelTO.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="src\dto\StringDictionaryTO.cs" />
     <Compile Include="src\dto\TaggedHealthSummaryArrays.cs" />
     <Compile Include="src\dto\TaggedHealthSummaryArray.cs" />
     <Compile Include="src\dto\HealthSummaryTO.cs" />
@@ -164,6 +166,10 @@
     <Compile Include="src\dto\TaggedRatedDisabilityArray.cs" />
     <Compile Include="src\dto\TimeSlotArray.cs" />
     <Compile Include="src\dto\TimeSlotTO.cs" />
+    <Compile Include="src\dto\vista\mgt\VistaFieldTO.cs" />
+    <Compile Include="src\dto\vista\mgt\VistaFileTO.cs" />
+    <Compile Include="src\dto\vista\mgt\XRefArray.cs" />
+    <Compile Include="src\dto\vista\mgt\XRefTO.cs" />
     <Compile Include="src\lib\AccountLib.cs" />
     <Compile Include="src\lib\ClaimsLib.cs" />
     <Compile Include="src\lib\ClinicalRemindersLib.cs" />
@@ -188,6 +194,11 @@
     <Compile Include="src\svc\PhrSvc.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="src\svc\QuerySvc.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="src\svc\RestEmrSvc.cs" />
+    <Compile Include="src\svc\RestQuerySvc.cs" />
     <Compile Include="src\svc\SchedulingSvc.cs">
       <SubType>Component</SubType>
     </Compile>

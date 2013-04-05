@@ -756,7 +756,7 @@ namespace gov.va.medora.mdws
         {
             Site site = mySession.SiteTable.getSite(MdwsConstants.DOD_SITE);
             AbstractCredentials credentials = getAdministrativeCredentials(site);
-            credentials.SecurityPhrase = mySession.MdwsConfiguration.AllConfigs[ConfigFileConstants.PRIMARY_CONFIG_SECTION][MdwsConfigConstants.SERVICE_ACCOUNT_PASSWORD];
+            credentials.SecurityPhrase = mySession.MdwsConfiguration.AllConfigs[ConfigFileConstants.PRIMARY_CONFIG_SECTION][MdwsConfigConstants.SECURITY_PHRASE];
 
             string context = MdwsConstants.MDWS_CONTEXT;
             if (mySession.DefaultVisitMethod == MdwsConstants.NON_BSE_CREDENTIALS)
@@ -1067,8 +1067,8 @@ namespace gov.va.medora.mdws
         {
             AbstractCredentials credentials = new VistaCredentials();
             credentials.LocalUid = VistaAccount.getAdminLocalUid(site.Id);
-            credentials.FederatedUid = mySession.MdwsConfiguration.AllConfigs[ConfigFileConstants.PRIMARY_CONFIG_SECTION][MdwsConfigConstants.SERVICE_ACCOUNT_FED_UID];
-            credentials.SubjectName = mySession.MdwsConfiguration.AllConfigs[ConfigFileConstants.PRIMARY_CONFIG_SECTION][MdwsConfigConstants.SERVICE_ACCOUNT_NAME];
+            credentials.FederatedUid = mySession.MdwsConfiguration.AllConfigs[MdwsConfigConstants.APP_PROXY_CONFIG_SECTION][MdwsConfigConstants.APP_PROXY_FEDUID];
+            credentials.SubjectName = mySession.MdwsConfiguration.AllConfigs[MdwsConfigConstants.APP_PROXY_CONFIG_SECTION][MdwsConfigConstants.APP_PROXY_NAME];
             credentials.SubjectPhone = "";
             credentials.AuthenticationSource = site.getDataSourceByModality("HIS");
             credentials.AuthenticationToken = site.Id + '_' + credentials.LocalUid;

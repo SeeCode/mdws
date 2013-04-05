@@ -1,22 +1,4 @@
-﻿#region CopyrightHeader
-//
-//  Copyright by Contributors
-//
-//  Licensed under the Apache License, Version 2.0 (the "License");
-//  you may not use this file except in compliance with the License.
-//  You may obtain a copy of the License at
-//
-//         http://www.apache.org/licenses/LICENSE-2.0.txt
-//
-//  Unless required by applicable law or agreed to in writing, software
-//  distributed under the License is distributed on an "AS IS" BASIS,
-//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//  See the License for the specific language governing permissions and
-//  limitations under the License.
-//
-#endregion
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -30,9 +12,18 @@ namespace gov.va.medora.mdws.conf
     /// <summary>
     /// Provides a wrapper for MDWS configuration settings
     /// </summary>
-    public class MdwsConfiguration : AppConfig
+    public class MdwsConfiguration : MdoConfiguration
     {
         #region Private properties and their accessors
+
+        bool _useConnectionPool;
+        public bool UseConnectionPool { get { return _useConnectionPool; } set { _useConnectionPool = value; } }
+
+        User _appProxy;
+        public User ApplicationProxy { get { return _appProxy; } set { _appProxy = value; } }
+
+        TimeSpan _timeout = new TimeSpan(0, 15, 0); // set default to 15 mins
+        public TimeSpan TimeOut { get { return _timeout; } set { _timeout = value; } }
 
         FacadeConfiguration _facadeConfiguration;
         public FacadeConfiguration FacadeConfiguration
@@ -84,7 +75,8 @@ namespace gov.va.medora.mdws.conf
         /// MDWS configuration settings wrapper class. This class fetches all the MDWS registry settings
         /// upon instantiation and builds its objects accordingly.
         /// </summary>
-        public MdwsConfiguration() : base()
+        public MdwsConfiguration()
+            : base()
         {
             setResourcesPaths();
             base.readConfigFile(ConfigFilePath);
@@ -96,7 +88,8 @@ namespace gov.va.medora.mdws.conf
         /// upon instantiation and builds its objects accordingly.
         /// </summary>
         /// <param name="facadeName">The facade being invoked by a client application</param>
-        public MdwsConfiguration(string facadeName) : base()
+        public MdwsConfiguration(string facadeName)
+            : base()
         {
             setResourcesPaths();
             base.readConfigFile(ConfigFilePath);
@@ -114,10 +107,10 @@ namespace gov.va.medora.mdws.conf
             }
             else
             {
-                ConfigFilePath = _resourcesPath + "conf\\app.conf";
+                ConfigFilePath = _resourcesPath + "conf\\mdws.conf";
             }
 #else
-            ConfigFilePath = _resourcesPath + "conf\\app.conf";
+            ConfigFilePath = _resourcesPath + "conf\\mdws.conf";
 #endif
         }
 
@@ -141,25 +134,67 @@ namespace gov.va.medora.mdws.conf
                 {
                     try
                     {
-                        _applicationSessionsLogLevel = (ApplicationSessionsLogLevel)Enum.Parse(typeof(ApplicationSessionsLogLevel), 
+                        _applicationSessionsLogLevel = (ApplicationSessionsLogLevel)Enum.Parse(typeof(ApplicationSessionsLogLevel),
                             base.AllConfigs[MdwsConfigConstants.MDWS_CONFIG_SECTION][MdwsConfigConstants.SESSIONS_LOG_LEVEL]);
                     }
                     catch (Exception) { }
                 }
                 if (base.AllConfigs[MdwsConfigConstants.MDWS_CONFIG_SECTION].ContainsKey(MdwsConfigConstants.SESSIONS_LOGGING))
                 {
-                    Boolean.TryParse(base.AllConfigs[MdwsConfigConstants.MDWS_CONFIG_SECTION][MdwsConfigConstants.SESSIONS_LOGGING], 
+                    Boolean.TryParse(base.AllConfigs[MdwsConfigConstants.MDWS_CONFIG_SECTION][MdwsConfigConstants.SESSIONS_LOGGING],
                         out _applicationSessionsLogging);
+                }
+
+                TimeSpan.TryParse(getString(MdwsConfigConstants.TIMEOUT, base.AllConfigs[MdwsConfigConstants.MDWS_CONFIG_SECTION]), out _timeout);
+                Boolean.TryParse(getString(MdwsConfigConstants.CONNECTION_POOL_CONFIG_SECTION, base.AllConfigs[MdwsConfigConstants.MDWS_CONFIG_SECTION]), out _useConnectionPool);
+            }
+            if (base.AllConfigs.ContainsKey(MdwsConfigConstants.APP_PROXY_CONFIG_SECTION))
+            {
+                string name = getString(MdwsConfigConstants.APP_PROXY_NAME, base.AllConfigs[MdwsConfigConstants.APP_PROXY_CONFIG_SECTION]);
+                _appProxy.UserName = getString(MdwsConfigConstants.APP_PROXY_USERNAME, base.AllConfigs[MdwsConfigConstants.APP_PROXY_CONFIG_SECTION]);
+                _appProxy.Pwd = getString(MdwsConfigConstants.APP_PROXY_PASSWORD, base.AllConfigs[MdwsConfigConstants.APP_PROXY_CONFIG_SECTION]);
+                _appProxy.Uid = getString(MdwsConfigConstants.APP_PROXY_UID, base.AllConfigs[MdwsConfigConstants.APP_PROXY_CONFIG_SECTION]);
+                string feduid = getString(MdwsConfigConstants.APP_PROXY_FEDUID, base.AllConfigs[MdwsConfigConstants.APP_PROXY_CONFIG_SECTION]);
+                _appProxy.Phone = getString(MdwsConfigConstants.APP_PROXY_PHONE, base.AllConfigs[MdwsConfigConstants.APP_PROXY_CONFIG_SECTION]);
+                string permission = getString(MdwsConfigConstants.APP_PROXY_PERMISSION, base.AllConfigs[MdwsConfigConstants.APP_PROXY_CONFIG_SECTION]);
+                string siteId = getString(MdwsConfigConstants.APP_PROXY_SITE_ID, base.AllConfigs[MdwsConfigConstants.APP_PROXY_CONFIG_SECTION]);
+                _appProxy.PermissionString = getString(MdwsConfigConstants.APP_PROXY_CRED_TYPE, base.AllConfigs[MdwsConfigConstants.APP_PROXY_CONFIG_SECTION]);
+                if (!String.IsNullOrEmpty(name))
+                {
+                    _appProxy.Name = new PersonName(name);
+                }
+                if (SocSecNum.isValid(feduid))
+                {
+                    _appProxy.SSN = new SocSecNum(feduid);
+                }
+                if (!String.IsNullOrEmpty(permission))
+                {
+                    _appProxy.PrimaryPermission = new gov.va.medora.mdo.dao.vista.MenuOption(permission);
+                }
+                if (!String.IsNullOrEmpty(siteId))
+                {
+                    _appProxy.LogonSiteId = new SiteId(siteId);
                 }
             }
         }
 
+        string getString(string key, Dictionary<string, string> values)
+        {
+            if (values.ContainsKey(key))
+            {
+                return values[key];
+            }
+            return "";
+        }
+
         private void setDefaults()
         {
+            //this.ApplicationProxy = MdwsUtils.getApplicationProxyUser();
             _applicationSessionsLogging = false;
             _applicationSessionsLogLevel = mdws.ApplicationSessionsLogLevel.info;
             _isProduction = true;
             _facadeConfiguration = new FacadeConfiguration(null);
+            this.TimeOut = new TimeSpan(0, 15, 0);
 
             if (base.AllConfigs == null || base.AllConfigs.Count == 0)
             {

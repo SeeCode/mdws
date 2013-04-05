@@ -1,21 +1,3 @@
-#region CopyrightHeader
-//
-//  Copyright by Contributors
-//
-//  Licensed under the Apache License, Version 2.0 (the "License");
-//  you may not use this file except in compliance with the License.
-//  You may obtain a copy of the License at
-//
-//         http://www.apache.org/licenses/LICENSE-2.0.txt
-//
-//  Unless required by applicable law or agreed to in writing, software
-//  distributed under the License is distributed on an "AS IS" BASIS,
-//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//  See the License for the specific language governing permissions and
-//  limitations under the License.
-//
-#endregion
-
 using System;
 using System.Web;
 using System.Collections.Specialized;
@@ -26,6 +8,10 @@ using gov.va.medora.mdws.dto;
 using gov.va.medora.mdo.dao;
 using System.Net.Mail;
 using System.Net;
+using gov.va.medora.mdws.dto.vista.mgt;
+using System.Collections.Generic;
+using gov.va.medora.mdo.dao.vista;
+using System.Runtime.Serialization.Json;
 
 namespace gov.va.medora.mdws
 {
@@ -75,6 +61,90 @@ namespace gov.va.medora.mdws
                 ToolsApi api = new ToolsApi();
                 string s = api.isRpcAvailable(cxn, target, context);
                 result = new TextTO(s);
+            }
+            catch (Exception e)
+            {
+                result.fault = new FaultTO(e.Message);
+            }
+            return result;
+        }
+
+        public TextArray ddrLister(
+            string file,
+            string iens,
+            string fields,
+            string flags,
+            string maxrex,
+            string from,
+            string part,
+            string xref,
+            string screen,
+            string identifier)
+        {
+            return ddrLister(null,file,iens,fields,flags,maxrex,from,part,xref,screen,identifier);
+        }
+
+        public TextArray ddrLister(
+            string sitecode,
+            string file,
+            string iens,
+            string fields,
+            string flags,
+            string maxrex,
+            string from,
+            string part,
+            string xref,
+            string screen,
+            string identifier)
+        {
+            TextArray result = new TextArray();
+            string msg = MdwsUtils.isAuthorizedConnection(mySession, sitecode);
+            if (msg != "OK")
+            {
+                result.fault = new FaultTO(msg);
+            }
+            if (result.fault != null)
+            {
+                return result;
+            }
+
+            if (sitecode == null)
+            {
+                sitecode = mySession.ConnectionSet.BaseSiteId;
+            }
+
+            try
+            {
+                AbstractConnection cxn = mySession.ConnectionSet.getConnection(sitecode);
+                ToolsApi api = new ToolsApi();
+                string[] s = api.ddrLister(cxn, file, iens, fields, flags, maxrex, from, part, xref, screen, identifier);
+                result = new TextArray(s);
+            }
+            catch (Exception e)
+            {
+                result.fault = new FaultTO(e.Message);
+            }
+            return result;
+        }
+
+        public TaggedTextArray ddrListerMS(
+            string file,
+            string iens,
+            string fields,
+            string flags,
+            string maxrex,
+            string from,
+            string part,
+            string xref,
+            string screen,
+            string identifier)
+        {
+            TaggedTextArray result = new TaggedTextArray();
+            try
+            {
+                ToolsApi api = new ToolsApi();
+                IndexedHashtable s = api.ddrLister(mySession.ConnectionSet, file, iens, fields, flags, maxrex, from, part, xref, screen, identifier);
+                result = new TaggedTextArray(s);
             }
             catch (Exception e)
             {
@@ -211,6 +281,159 @@ namespace gov.va.medora.mdws
                 result.fault = new FaultTO(exc);
                 return result;
             }
+        }
+
+        public VistaFileTO getFile(string fileNumber, bool includeXRefs)
+        {
+            VistaFileTO result = new VistaFileTO();
+
+            try
+            {
+                IndexedHashtable ihs = new ToolsApi().getFile(mySession.ConnectionSet, fileNumber, includeXRefs);
+                result = new VistaFileTO(ihs.GetValue(0) as gov.va.medora.mdo.dao.vista.VistaFile);
+            }
+            catch (Exception exc)
+            {
+                result.fault = new FaultTO(exc);
+            }
+            return result;
+        }
+
+        public XRefArray getXRefs(string fileNumber)
+        {
+            XRefArray result = new XRefArray();
+
+            try
+            {
+                IndexedHashtable ihs = new ToolsApi().getXRefs(mySession.ConnectionSet, fileNumber);
+                Dictionary<string, CrossRef> xrefs = (Dictionary<string, CrossRef>)ihs.GetValue(0);
+                result = new XRefArray(xrefs);
+            }
+            catch (Exception exc)
+            {
+                result.fault = new FaultTO(exc);
+            }
+            return result;
+        }
+
+        public TextTO create(String jsonDictionaryFieldsAndValues, String file, String parentRecordIdString)
+        {
+            TextTO result = new TextTO();
+
+            if (String.IsNullOrEmpty(jsonDictionaryFieldsAndValues))
+            {
+                result.fault = new FaultTO("Missing JSON fields and values dictionary");
+            }
+            else if (String.IsNullOrEmpty(file))
+            {
+                result.fault = new FaultTO("Missing file");
+            }
+
+            if (result.fault != null)
+            {
+                return result;
+            }
+
+            try
+            {
+                Dictionary<String, String> deserializedDict = JsonUtils.Deserialize<Dictionary<String, String>>(jsonDictionaryFieldsAndValues);
+                result.text = new ToolsApi().create(mySession.ConnectionSet.BaseConnection, deserializedDict, file, parentRecordIdString);
+            }
+            catch (Exception exc)
+            {
+                result.fault = new FaultTO(exc);
+            }
+            return result;
+        }
+
+        public StringDictionaryTO read(String recordId, String fields, String file)
+        {
+            StringDictionaryTO result = new StringDictionaryTO();
+
+            if (String.IsNullOrEmpty(fields))
+            {
+                result.fault = new FaultTO("Missing fields");
+            }
+            else if (String.IsNullOrEmpty(file))
+            {
+                result.fault = new FaultTO("Missing file");
+            }
+
+            if (result.fault != null)
+            {
+                return result;
+            }
+
+            try
+            {
+                result = new StringDictionaryTO(new ToolsApi().read(mySession.ConnectionSet.BaseConnection, recordId, fields, file));
+            }
+            catch (Exception exc)
+            {
+                result.fault = new FaultTO(exc);
+            }
+            return result;
+        }
+
+        public TextTO update(String jsonDictionaryFieldsAndValues, String recordId, String file)
+        {
+            TextTO result = new TextTO();
+
+            if (String.IsNullOrEmpty(jsonDictionaryFieldsAndValues))
+            {
+                result.fault = new FaultTO("Missing JSON fields and values dictionary");
+            }
+            else if (String.IsNullOrEmpty(file))
+            {
+                result.fault = new FaultTO("Missing file");
+            }
+
+            if (result.fault != null)
+            {
+                return result;
+            }
+
+            try
+            {
+                Dictionary<String, String> deserializedDict = JsonUtils.Deserialize<Dictionary<String, String>>(jsonDictionaryFieldsAndValues);
+                new ToolsApi().update(mySession.ConnectionSet.BaseConnection, deserializedDict, recordId, file);
+                result.text = "OK";
+            }
+            catch (Exception exc)
+            {
+                result.fault = new FaultTO(exc);
+            }
+            return result;
+        }
+
+        public TextTO delete(String recordId, String file)
+        {
+            TextTO result = new TextTO();
+
+            if (String.IsNullOrEmpty(recordId))
+            {
+                result.fault = new FaultTO("Missing record ID");
+            }
+            else if (String.IsNullOrEmpty(file))
+            {
+                result.fault = new FaultTO("Missing file");
+            }
+
+            if (result.fault != null)
+            {
+                return result;
+            }
+
+            try
+            {
+                new ToolsApi().delete(mySession.ConnectionSet.BaseConnection, recordId, file);
+                result.text = "OK";
+            }
+            catch (Exception exc)
+            {
+                result.fault = new FaultTO(exc);
+            }
+            return result;
         }
     }
 }

@@ -719,7 +719,7 @@ namespace gov.va.medora.mdws
 
                 MySession newMySession = new MySession(mySession.FacadeName);
                 AccountLib accountLib = new AccountLib(newMySession);
-                UserTO visitUser = accountLib.visitAndAuthorize(mySession.MdwsConfiguration.AllConfigs[ConfigFileConstants.BSE_CONFIG_SECTION][MdwsConfigConstants.SERVICE_ACCOUNT_PASSWORD], 
+                UserTO visitUser = accountLib.visitAndAuthorize(mySession.MdwsConfiguration.AllConfigs[MdwsConfigConstants.MDWS_CONFIG_SECTION][MdwsConfigConstants.SECURITY_PHRASE], 
                     patient.CmorSiteId, mySession.ConnectionSet.BaseConnection.DataSource.SiteId.Id, mySession.User.Name.LastNameFirst, 
                     mySession.User.Uid, mySession.User.SSN.toString(), "OR CPRS GUI CHART");
 

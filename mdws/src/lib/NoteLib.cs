@@ -933,7 +933,7 @@ namespace gov.va.medora.mdws
         public TaggedNoteArrays getNotesForBhie(string pwd, string mpiPid, string fromDate, string toDate, string nNotes)
         {
             TaggedNoteArrays result = new TaggedNoteArrays();
-            if (String.Equals(pwd, _mySession.MdwsConfiguration.AllConfigs[ConfigFileConstants.PRIMARY_CONFIG_SECTION][MdwsConfigConstants.BHIE_PASSWORD]))
+            if (String.Equals(pwd, _mySession.MdwsConfiguration.AllConfigs[ConfigFileConstants.PRIMARY_CONFIG_SECTION][MdwsConfigConstants.SECURITY_PHRASE]))
             {
                 result.fault = new FaultTO("Invalid application password");
             }

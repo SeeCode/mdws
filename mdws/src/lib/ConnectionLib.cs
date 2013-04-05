@@ -290,7 +290,7 @@ namespace gov.va.medora.mdws
             try
             {
                 AccountLib acctLib = new AccountLib(mySession);
-                TaggedTextArray sites = acctLib.visitSites(mySession.MdwsConfiguration.AllConfigs[ConfigFileConstants.PRIMARY_CONFIG_SECTION][MdwsConfigConstants.SERVICE_ACCOUNT_PASSWORD], 
+                TaggedTextArray sites = acctLib.visitSites(mySession.MdwsConfiguration.AllConfigs[ConfigFileConstants.PRIMARY_CONFIG_SECTION][MdwsConfigConstants.SECURITY_PHRASE], 
                     sitelist, MdwsConstants.CPRS_CONTEXT);
 
                 ToolsApi api = new ToolsApi();
