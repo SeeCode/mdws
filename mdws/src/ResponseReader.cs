@@ -32,6 +32,8 @@ namespace gov.va.medora.mdws
     /// </summary>
     public class ResponseReader : Stream
     {
+        public Int64 JsonpResponseLength { get; set; }
+        public String JsonpCallback { get; set; }
         Stream _stream;
         string _responseString;
         DateTime _requestTimestamp;
@@ -115,8 +117,14 @@ namespace gov.va.medora.mdws
         public override void Write(byte[] buffer, int offset, int count)
         {
             _responseString = System.Text.Encoding.Default.GetString(buffer, offset, count);
+            // if we found the request was a jsonp request
+            if (!String.IsNullOrEmpty(this.JsonpCallback))
+            {
+                _responseString = String.Concat(this.JsonpCallback, "(", _responseString, ");");
+                this.JsonpResponseLength = _responseString.Length;
+            }
             byte[] b = System.Text.Encoding.Default.GetBytes(_responseString);
-            _stream.Write(b, offset, count);
+            _stream.Write(b, offset, b.Length);
         }
     }
 }

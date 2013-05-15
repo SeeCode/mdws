@@ -168,6 +168,7 @@
     <Compile Include="src\dto\TimeSlotTO.cs" />
     <Compile Include="src\dto\vista\mgt\VistaFieldTO.cs" />
     <Compile Include="src\dto\vista\mgt\VistaFileTO.cs" />
+    <Compile Include="src\dto\vista\mgt\VistaRecordTO.cs" />
     <Compile Include="src\dto\vista\mgt\XRefArray.cs" />
     <Compile Include="src\dto\vista\mgt\XRefTO.cs" />
     <Compile Include="src\lib\AccountLib.cs" />
@@ -188,6 +189,7 @@
     <Compile Include="src\svc\ClaimSvc.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="src\svc\CrudSvc.cs" />
     <Compile Include="src\svc\FindPatientService.cs">
       <SubType>Component</SubType>
     </Compile>

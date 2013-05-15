@@ -25,10 +25,10 @@ namespace gov.va.medora.mdws
         }
 
         [WebMethod(EnableSession = true, Description = "Read a record from a Vista file")]
-        public StringDictionaryTO read(String recordId, String fields, String file)
+        public VistaRecordTO read(String recordId, String fields, String file)
         {
-            return (StringDictionaryTO)QueryTemplate.getQuery(QueryType.SOAP).execute(this.MySession, 
-                new Func<String, String, String, StringDictionaryTO>(new ToolsLib(this.MySession).read),
+            return (VistaRecordTO)QueryTemplate.getQuery(QueryType.SOAP).execute(this.MySession,
+                new Func<String, String, String, VistaRecordTO>(new ToolsLib(this.MySession).read),
                 new object[] { recordId, fields, file });
         }
 

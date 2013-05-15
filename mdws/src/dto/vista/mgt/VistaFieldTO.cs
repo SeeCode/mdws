@@ -18,6 +18,7 @@ namespace gov.va.medora.mdws.dto.vista.mgt
         public VistaFileTO pointsTo;
         public string transform;
         public string type;
+        public string value;
 
         public VistaFieldTO() { }
 
@@ -40,6 +41,7 @@ namespace gov.va.medora.mdws.dto.vista.mgt
             this.number = mdo.VistaNumber;
             this.transform = mdo.Transform;
             this.type = mdo.Type;
+            this.value = mdo.VistaValue;
         }
     }
 }

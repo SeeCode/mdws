@@ -79,11 +79,11 @@ namespace gov.va.medora.mdws
                 new object[] { jsonDictionaryFieldsAndValues, file, parentRecordIdString });
         }
 
-        public StringDictionaryTO read(String siteId, String file, String recordId, String fields)
+        public VistaRecordTO read(String siteId, String file, String recordId, String fields)
         {
             MySession newSession = new MySession();
-            return (StringDictionaryTO)QueryTemplate.getQuery(QueryType.STATELESS, siteId)
-                .execute(newSession, new Func<String, String, String, StringDictionaryTO>(new ToolsLib(newSession).read),
+            return (VistaRecordTO)QueryTemplate.getQuery(QueryType.STATELESS, siteId)
+                .execute(newSession, new Func<String, String, String, VistaRecordTO>(new ToolsLib(newSession).read),
                 new object[] { recordId, fields, file });
         }
 
@@ -152,7 +152,7 @@ namespace gov.va.medora.mdws
     {
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json, UriTemplate = "record/{siteId}/{file}/{recordId}/{fields}")]
-        StringDictionaryTO read(string siteId, string file, string recordId, string fields);
+        VistaRecordTO read(string siteId, string file, string recordId, string fields);
 
         [OperationContract]
         [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json, UriTemplate = "record/{siteId}/{file}/{parentRecordId}/{values}")]

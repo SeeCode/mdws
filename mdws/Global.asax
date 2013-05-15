@@ -4,6 +4,11 @@
 
     void Application_Start(object sender, EventArgs e) 
     {
+            // WCF
+        System.Web.Routing.RouteTable.Routes.Add(new System.ServiceModel.Activation.ServiceRoute
+            ("CrudSvc", new System.ServiceModel.Activation.WebServiceHostFactory(), typeof(gov.va.medora.mdws.CrudSvc)));
+            // end WCF
+
         gov.va.medora.mdws.ApplicationSessions sessions = new gov.va.medora.mdws.ApplicationSessions();
         sessions.Start = DateTime.Now;
         Application.Lock();
@@ -84,6 +89,12 @@
             object bugWorkaround = Response.Filter;
             // this adds our custom filter to the response object so we can cache the response text for logging
             Response.Filter = new gov.va.medora.mdws.ResponseReader(Response.OutputStream);
+            // JSONP support!
+            if (!String.IsNullOrEmpty(Request.QueryString["callback"]))
+            {
+                ((gov.va.medora.mdws.ResponseReader)Response.Filter).JsonpCallback = Request.Params["callback"];
+            }
+            // end JSONP
         }
         catch (Exception)
         {
@@ -185,6 +196,16 @@
         finally
         {
             Application.UnLock();
+        }
+        // JSONP support - for some reason, IIS was not returning correct content-length... this is the only thing i could get working to fix it
+        // so that the entire javascript function would be returned
+        if (response.JsonpResponseLength > 0)
+        {
+            Response.ClearHeaders();
+            Response.AppendHeader("Content-Length", response.JsonpResponseLength.ToString());
+            Response.AppendHeader("Content-Type", "application/json; charset=utf-8");
+            //NameValueCollection nvc = Response.Headers;
+            //nvc["Content-Length"] = response.JsonpResponseLength.ToString();
         }
     }
 

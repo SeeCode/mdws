@@ -316,17 +316,46 @@ namespace gov.va.medora.mdws
             return result;
         }
 
-        public TextTO create(String jsonDictionaryFieldsAndValues, String file, String parentRecordIdString)
+        public TextTO create(String jsonDictionaryFieldsAndValues, String file, String iens)
+        {
+            try
+            {
+                Dictionary<String, String> deserializedDict = JsonUtils.Deserialize<Dictionary<String, String>>(jsonDictionaryFieldsAndValues);
+                VistaFieldTO[] fieldArray = new VistaFieldTO[deserializedDict.Count];
+                int counter = 0;
+                foreach (String key in deserializedDict.Keys)
+                {
+                    VistaFieldTO current = new VistaFieldTO() { number = key, value = deserializedDict[key] };
+                    fieldArray[counter] = current;
+                }
+                VistaRecordTO record = new VistaRecordTO() { fields = fieldArray, file = new VistaFileTO() { number = file }, iens = iens };
+                return create(record);
+            }
+            catch (Exception exc)
+            {
+                return new TextTO() { fault = new FaultTO(exc) };
+            }
+        }
+
+        public TextTO create(VistaRecordTO record)
         {
             TextTO result = new TextTO();
 
-            if (String.IsNullOrEmpty(jsonDictionaryFieldsAndValues))
+            if (record == null || record.fields == null || record.fields.Length < 1)
             {
-                result.fault = new FaultTO("Missing JSON fields and values dictionary");
+                result.fault = new FaultTO("The record must have at least 1 field");
             }
-            else if (String.IsNullOrEmpty(file))
+            if (record.file == null || String.IsNullOrEmpty(record.file.number))
             {
-                result.fault = new FaultTO("Missing file");
+                result.fault = new FaultTO("You must specify the file number in which this record should be created");
+            }
+            foreach (VistaFieldTO field in record.fields)
+            {
+                if (field == null || String.IsNullOrEmpty(field.number) || String.IsNullOrEmpty(field.value))
+                {
+                    result.fault = new FaultTO("All fields must have a number and value");
+                    break;
+                }
             }
 
             if (result.fault != null)
@@ -336,8 +365,12 @@ namespace gov.va.medora.mdws
 
             try
             {
-                Dictionary<String, String> deserializedDict = JsonUtils.Deserialize<Dictionary<String, String>>(jsonDictionaryFieldsAndValues);
-                result.text = new ToolsApi().create(mySession.ConnectionSet.BaseConnection, deserializedDict, file, parentRecordIdString);
+                Dictionary<String, String> keysAndValues = new Dictionary<string, string>();
+                foreach (VistaFieldTO field in record.fields)
+                {
+                    keysAndValues.Add(field.number, field.value);
+                }
+                result.text = new ToolsApi().create(mySession.ConnectionSet.BaseConnection, keysAndValues, record.file.number, record.iens);
             }
             catch (Exception exc)
             {
@@ -346,9 +379,9 @@ namespace gov.va.medora.mdws
             return result;
         }
 
-        public StringDictionaryTO read(String recordId, String fields, String file)
+        public VistaRecordTO read(String recordId, String fields, String file)
         {
-            StringDictionaryTO result = new StringDictionaryTO();
+            VistaRecordTO result = new VistaRecordTO();
 
             if (String.IsNullOrEmpty(fields))
             {
@@ -366,7 +399,17 @@ namespace gov.va.medora.mdws
 
             try
             {
-                result = new StringDictionaryTO(new ToolsApi().read(mySession.ConnectionSet.BaseConnection, recordId, fields, file));
+                Dictionary<String, String> fieldsAndValues = new ToolsApi().read(mySession.ConnectionSet.BaseConnection, recordId, fields, file);
+                result.file = new VistaFileTO() { number = file };
+                result.ien = recordId;
+                result.siteId = mySession.ConnectionSet.BaseConnection.DataSource.SiteId.Id;
+                result.fields = new VistaFieldTO[fieldsAndValues.Count];
+                String[] allKeys = new String[fieldsAndValues.Count];
+                fieldsAndValues.Keys.CopyTo(allKeys, 0);
+                for (int i = 0; i < allKeys.Length; i++)
+                {
+                    result.fields[i] = new VistaFieldTO() { number = allKeys[i], value = fieldsAndValues[allKeys[i]] };
+                }
             }
             catch (Exception exc)
             {
@@ -377,15 +420,48 @@ namespace gov.va.medora.mdws
 
         public TextTO update(String jsonDictionaryFieldsAndValues, String recordId, String file)
         {
+            try
+            {
+                Dictionary<String, String> deserializedDict = JsonUtils.Deserialize<Dictionary<String, String>>(jsonDictionaryFieldsAndValues);
+                VistaFieldTO[] fieldArray = new VistaFieldTO[deserializedDict.Count];
+                int counter = 0;
+                foreach (String key in deserializedDict.Keys)
+                {
+                    VistaFieldTO current = new VistaFieldTO() { number = key, value = deserializedDict[key] };
+                    fieldArray[counter] = current;
+                }
+                VistaRecordTO record = new VistaRecordTO() { fields = fieldArray, file = new VistaFileTO() { number = file }, iens = recordId };
+                return create(record);
+            }
+            catch (Exception exc)
+            {
+                return new TextTO() { fault = new FaultTO(exc) };
+            }
+        }
+
+        public TextTO update(VistaRecordTO record)
+        {
             TextTO result = new TextTO();
 
-            if (String.IsNullOrEmpty(jsonDictionaryFieldsAndValues))
+            if (record == null || record.fields == null || record.fields.Length < 1)
             {
-                result.fault = new FaultTO("Missing JSON fields and values dictionary");
+                result.fault = new FaultTO("The record must have at least 1 field");
             }
-            else if (String.IsNullOrEmpty(file))
+            if (record.file == null || String.IsNullOrEmpty(record.file.number))
             {
-                result.fault = new FaultTO("Missing file");
+                result.fault = new FaultTO("You must specify the file number in which this record should be created");
+            }
+            foreach (VistaFieldTO field in record.fields)
+            {
+                if (field == null || String.IsNullOrEmpty(field.number) || String.IsNullOrEmpty(field.value))
+                {
+                    result.fault = new FaultTO("All fields must have a number and value");
+                    break;
+                }
+            }
+            if (String.IsNullOrEmpty(record.iens))
+            {
+                result.fault = new FaultTO("You must supply the IENS string for the record being updated");
             }
 
             if (result.fault != null)
@@ -395,8 +471,12 @@ namespace gov.va.medora.mdws
 
             try
             {
-                Dictionary<String, String> deserializedDict = JsonUtils.Deserialize<Dictionary<String, String>>(jsonDictionaryFieldsAndValues);
-                new ToolsApi().update(mySession.ConnectionSet.BaseConnection, deserializedDict, recordId, file);
+                Dictionary<String, String> keysAndValues = new Dictionary<string, string>();
+                foreach (VistaFieldTO field in record.fields)
+                {
+                    keysAndValues.Add(field.number, field.value);
+                }
+                new ToolsApi().update(mySession.ConnectionSet.BaseConnection, keysAndValues, record.iens, record.file.number);
                 result.text = "OK";
             }
             catch (Exception exc)
